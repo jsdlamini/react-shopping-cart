@@ -22,7 +22,7 @@ function Home() {
       .then((querySnapshot) => {
         const data = querySnapshot.docs.map((doc) => doc.data());
         setProducts(data); // array of cities objects
-        console.log(data);
+        // console.log(data);
       });
   };
 
@@ -74,7 +74,7 @@ function Home() {
   };
 
   const sortProducts = (event) => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
     const sort = event.target.value;
     setSort(sort);
     setProducts(
@@ -97,7 +97,7 @@ function Home() {
   };
 
   const filterProducts = (event) => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
 
     if (event.target.value === "") {
       setSize(event.target.value);
@@ -111,12 +111,12 @@ function Home() {
       );
     }
 
-    console.log(event.target.value);
+    // console.log(event.target.value);
   };
 
   return (
     <div className="grid-container">
-      <Header />
+      {/* <Header /> */}
       <main>
         <div className="content">
           <div className="main">
@@ -128,7 +128,7 @@ function Home() {
               filterProducts={filterProducts}
               sortProducts={sortProducts}
             ></Filter>
-            {console.log("products, ", products)}
+            {/* {console.log("products, ", products)} */}
             <Products products={products} addToCart={addToCart} />
           </div>
           <div className="sidebar">

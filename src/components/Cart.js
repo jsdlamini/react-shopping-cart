@@ -1,24 +1,39 @@
 import React, { Component, useState } from "react";
 import formartCurrency from "../util";
 import Fade from "react-reveal/Fade";
-import { useHistory  } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Payment from "./Payment";
 
 //  <Cart cartItems={cartItems} removeFromCart={removeFromCart} />{" "}
-function Cart({ cartItems, removeFromCart }) {
+function Cart({ cartItems, removeFromCart, setcartItems }) {
   const history = useHistory();
-  
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [showCheckout, setShowCheckout] = useState(false);
   const [order, setOrder] = useState({});
 
-  
-
   const handleInput = (e) => {
+    e.preventDefault();
+    [e.target.name] = e.target.value;
+    // console.log(e.target.value);
+  };
+
+  const updateName = (e) => {
     // this.setState({ [e.target.name]: e.target.value });
-    e.target.name = e.target.value;
+    e.preventDefault();
+    setName(e.target.value);
+  };
+  const updateEmail = (e) => {
+    // this.setState({ [e.target.name]: e.target.value });
+    e.preventDefault();
+    setEmail(e.target.value);
+  };
+  const updateAddress = (e) => {
+    // this.setState({ [e.target.name]: e.target.value });
+    e.preventDefault();
+    setAddress(e.target.value);
   };
 
   const createOrder = (e) => {
@@ -110,7 +125,7 @@ function Cart({ cartItems, removeFromCart }) {
                           name="email"
                           type="email"
                           required
-                          onChange={handleInput}
+                          onChange={updateEmail}
                         ></input>
                       </li>
                       <li>
@@ -119,7 +134,7 @@ function Cart({ cartItems, removeFromCart }) {
                           name="name"
                           type="text"
                           required
-                          onChange={handleInput}
+                          onChange={updateName}
                         ></input>
                       </li>
                       <li>
@@ -128,11 +143,27 @@ function Cart({ cartItems, removeFromCart }) {
                           name="address"
                           type="text"
                           required
-                          onChange={handleInput}
+                          onChange={updateAddress}
                         ></input>
                       </li>
                       <li>
-                        <button className="button primary" type="submit" onClick={ e => history.push('/payment')}>
+                        {/* {console.log("name is .... : ", name)} */}
+                        <button
+                          className="button primary"
+                          type="submit"
+                          onClick={(e) =>
+                            history.push({
+                              pathname: "/payment",
+                              name: name,
+                              address: address,
+                              email: email,
+                              cartItems: cartItems,
+                              removeFromCart: removeFromCart,
+                              setcartItems: setcartItems,
+                              order: order,
+                            })
+                          }
+                        >
                           Proceed to Checkout
                         </button>
                       </li>
