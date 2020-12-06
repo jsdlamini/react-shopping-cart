@@ -1,17 +1,23 @@
 //Feature 1
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Cart from "./components/Cart";
 import Filter from "./components/Filter";
 import Products from "./components/Products";
+import { CartContext } from "./contexts/CartContext";
 // import data from "./data.json";
 import db from "./Firebase";
 import Header from "./Header";
+import { useStateValue } from "./StateProvider";
 
 function Home() {
   const [products, setProducts] = useState([]);
-  const [cartItems, setcartItems] = useState([]);
+  //const [cartItems, setcartItems] = useState([]);
   const [size, setSize] = useState("");
   const [sort, setSort] = useState("");
+
+  const { cartItems } = useContext(CartContext);
+
+  // const [{ basket }, dispatch] = useStateValue();
 
   // const [input, setInput] = useState("");
   // const [messages, setMessages] = useState([]);
@@ -35,43 +41,6 @@ function Home() {
     //   setProducts(snapshot.docs.map((doc) => doc.data()))
     // );
   }, []);
-
-  const removeFromCart = (product) => {
-    const cart_Items = cartItems.slice();
-    const itemToRemove = cart_Items.filter((x) => x._id === product._id);
-
-    if (itemToRemove[0].count > 1) {
-      // For items with quantity greater than 1, just update index
-      cart_Items.map((item) =>
-        item._id === product._id
-          ? (item.count = item.count - 1)
-          : (item.count = item.count)
-      );
-      //Update the cartItems
-      // this.setState({
-      setcartItems(cart_Items);
-      // });
-    } else {
-      //  this.setState({
-      setcartItems(cart_Items.filter((x) => x._id !== product._id)); // For items with quantity== 1,  remove item
-      // });
-    }
-  };
-  const addToCart = (product) => {
-    const cart_Items = cartItems.slice(); //Copies the current cartItems in the Application state
-
-    let alreadyInCart = false;
-    cart_Items.forEach((item) => {
-      if (item._id === product._id) {
-        item.count++;
-        alreadyInCart = true;
-      }
-    });
-    if (!alreadyInCart) {
-      cart_Items.push({ ...product, count: 1 }); //Adds new instance of Product with a new field called count set to 1, the ...product copies the fields of the product
-    }
-    setcartItems(cart_Items);
-  };
 
   const sortProducts = (event) => {
     // console.log(event.target.value);
@@ -129,11 +98,17 @@ function Home() {
               sortProducts={sortProducts}
             ></Filter>
             {/* {console.log("products, ", products)} */}
-            <Products products={products} addToCart={addToCart} />
           </div>
-          <div className="sidebar">
-            {" "}
-            <Cart cartItems={cartItems} removeFromCart={removeFromCart} />{" "}
+          <div className="products__and__cart">
+            <div className="products__display">
+              <Products products={products} />
+            </div>
+
+{ cartItems.length !== 0 ? ( <div className="cart_sidebar">
+              <Cart />
+            </div>): ''
+           
+             }
           </div>
         </div>
       </main>

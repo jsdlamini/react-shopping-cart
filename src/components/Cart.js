@@ -1,11 +1,34 @@
-import React, { Component, useState } from "react";
+import React, { Component, useContext, useState } from "react";
 import formartCurrency from "../util";
 import Fade from "react-reveal/Fade";
 import { useHistory } from "react-router-dom";
 import Payment from "./Payment";
+import { useStateValue } from "../StateProvider";
+import { CartContext } from "../contexts/CartContext";
+import AddCircleIcon from "@material-ui/icons/AddCircle";
+import RemoveCircleIcon from "@material-ui/icons/RemoveCircle";
+import DeleteIcon from "@material-ui/icons/Delete";
 
-//  <Cart cartItems={cartItems} removeFromCart={removeFromCart} />{" "}
-function Cart({ cartItems, removeFromCart, setcartItems }) {
+function Cart() {
+  // const [ cart ,setCart, totalPrice ]= useContext(CartContext);
+  //const { increase, decrease, removeProduct } = useContext(CartContext);
+  const {
+    cartItems,
+
+    clearCart,
+    increase,
+    decrease,
+    removeProduct,
+    total,
+    itemCount,
+    checkout,
+    handleCheckout,
+  } = useContext(CartContext);
+
+  const isInCart = (product) => {
+    return !!cartItems.find((item) => item._id === product._id);
+  };
+
   const history = useHistory();
 
   const [name, setName] = useState("");
@@ -19,6 +42,20 @@ function Cart({ cartItems, removeFromCart, setcartItems }) {
     [e.target.name] = e.target.value;
     // console.log(e.target.value);
   };
+
+  // const removeFromCart = (product) => {
+  //   dispatch({
+  //     type: "REMOVE_FROM_CART",
+  //     item: {
+  //       _id: product._id,
+  //       image: product.image,
+  //       title: product.title,
+  //       price: product.price,
+  //       description: product.description,
+  //       availableSizes: product.availableSizes,
+  //     },
+  //   });
+  // };
 
   const updateName = (e) => {
     // this.setState({ [e.target.name]: e.target.value });
@@ -36,18 +73,18 @@ function Cart({ cartItems, removeFromCart, setcartItems }) {
     setAddress(e.target.value);
   };
 
-  const createOrder = (e) => {
-    e.preventDefault();
-    setOrder({
-      name: setName(name),
-      email: setEmail(email),
-      address: setAddress(address),
-      cartItems: cartItems,
-      total: cartItems.reduce((a, c) => a + c.price * c.count, 0),
-    });
+  // const createOrder = (e) => {
+  //   e.preventDefault();
+  //   setOrder({
+  //     name: setName(name),
+  //     email: setEmail(email),
+  //     address: setAddress(address),
+  //     cartItems: basket,
+  //     total: basket.reduce((a, c) => a + c.price * c.count, 0),
+  //   });
 
-    createOrder(order);
-  };
+  //   createOrder(order);
+  // };
 
   const closeModal = () => {
     //  clearOrder();
@@ -56,125 +93,159 @@ function Cart({ cartItems, removeFromCart, setcartItems }) {
   //const { cartItems } = this.props;
 
   return (
-    <div>
+    <div className="cart">
+      {/* <Fade left cascade> */}
+
       {cartItems.length === 0 ? (
         <div className="cart cart-header"> Cart is empty </div>
       ) : (
-        <div className="cart cart-header">
-          {" "}
-          You have {cartItems.length} items in the cart{" "}
-        </div>
-      )}
+        <>
+          <div className="cart-header">
+            <h4>
+              Grand Total : {formartCurrency(total)} ( {itemCount} items ){" "}
+            </h4>
+            <br />
+            <button
+              //className="button primary"
+              className="button_proceed "
+              onClick={() => {
+                setShowCheckout(true);
+              }}
+            >
+              Checkout
+            </button>
+            <br />
+            {cartItems.length !== 0 && (
+              <div>
+                {showCheckout && (
+                  <Fade right cascade>
+                    <div className="cart">
+                      <form onSubmit={""}>
+                        <ul className="form-container">
+                          <li>
+                            <label>Email</label>
+                            <input
+                              name="email"
+                              type="email"
+                              required
+                              onChange={updateEmail}
+                            ></input>
+                          </li>
+                          <li>
+                            <label>Full Name</label>
+                            <input
+                              name="name"
+                              type="text"
+                              required
+                              onChange={updateName}
+                            ></input>
+                          </li>
+                          <li>
+                            <label>Address</label>
+                            <input
+                              name="address"
+                              type="text"
+                              required
+                              onChange={updateAddress}
+                            ></input>
+                          </li>
+                          <li>
+                            {/* {console.log("name is .... : ", name)} */}
+                            <button
+                              className="button primary"
+                              type="submit"
+                              onClick={(e) =>
+                                history.push({
+                                  pathname: "/payment",
+                                  name: name,
+                                  address: address,
+                                  email: email,
 
-      <div>
-        <div className="cart">
-          <Fade left cascade>
-            <ul className="cart-items">
-              {cartItems.map((item) => (
-                <li key={item._id}>
-                  <div>
-                    <img src={item.image} alt={item.title} />
-                  </div>
-                  <div>
-                    {item.title}
-                    <div className="right">
-                      {formartCurrency(item.price)} X {item.count}{" "}
-                      <button
-                        className="button"
-                        onClick={() => removeFromCart(item)}
-                      >
-                        {" "}
-                        Remove
-                      </button>
+                                  order: order,
+                                })
+                              }
+                            >
+                              Proceed to Checkout
+                            </button>
+                          </li>
+                        </ul>
+                      </form>
                     </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Fade>
-        </div>
-        {cartItems.length !== 0 && (
-          <div>
-            <div className="cart">
-              <div className="total">
-                <div>
-                  Total:{" "}
-                  {formartCurrency(
-                    cartItems.reduce((a, c) => a + c.price * c.count, 0)
-                  )}
-                </div>
-                <button
-                  className="button primary"
-                  onClick={() => {
-                    setShowCheckout(true);
-                  }}
-                >
-                  {" "}
-                  Proceed
-                </button>
+                  </Fade>
+                )}
               </div>
-            </div>
-            {showCheckout && (
-              <Fade right cascade>
-                <div className="cart">
-                  <form onSubmit={createOrder}>
-                    <ul className="form-container">
-                      <li>
-                        <label>Email</label>
-                        <input
-                          name="email"
-                          type="email"
-                          required
-                          onChange={updateEmail}
-                        ></input>
-                      </li>
-                      <li>
-                        <label>Full Name</label>
-                        <input
-                          name="name"
-                          type="text"
-                          required
-                          onChange={updateName}
-                        ></input>
-                      </li>
-                      <li>
-                        <label>Address</label>
-                        <input
-                          name="address"
-                          type="text"
-                          required
-                          onChange={updateAddress}
-                        ></input>
-                      </li>
-                      <li>
-                        {/* {console.log("name is .... : ", name)} */}
-                        <button
-                          className="button primary"
-                          type="submit"
-                          onClick={(e) =>
-                            history.push({
-                              pathname: "/payment",
-                              name: name,
-                              address: address,
-                              email: email,
-                              cartItems: cartItems,
-                              removeFromCart: removeFromCart,
-                              setcartItems: setcartItems,
-                              order: order,
-                            })
-                          }
-                        >
-                          Proceed to Checkout
-                        </button>
-                      </li>
-                    </ul>
-                  </form>
-                </div>
-              </Fade>
             )}
           </div>
-        )}
-      </div>
+        </>
+      )}
+
+      {cartItems.map((item) => (
+        <div className="cart__item">
+          <div className="cart__header">
+            <h4>{item.title}</h4>
+          </div>
+
+          <div className="image__and__detail">
+            <div className="cart__image">
+              <span className="notify-badge">
+                {/* <div className="qty_section"> */}
+                <span> {item.quantity} </span>
+                {/* </div> */}
+              </span>
+              <img src={item.image} alt={item.title} />
+            </div>
+
+            <div className="cart__item_detail">
+              <div className="unit__price">
+                Price: {formartCurrency(item.price)}
+              </div>
+              <div className="total__price">
+                Total: {formartCurrency(item.price * item.quantity)}{" "}
+              </div>
+            </div>
+          </div>
+
+          <div className="cart__buttons">
+            <div className="remove__btn">
+              {item.quantity > 1 ? (
+                <button
+                  onClick={() => decrease(item)}
+                  // className="btn btn-danger btn-sm mb-1"
+                >
+                  <RemoveCircleIcon
+                    fontSize="large"
+                    style={{ color: "red", fontSize: 40 }}
+                  />
+                </button>
+              ) : (
+                item.quantity === 1 && (
+                  <button
+                    onClick={() => removeProduct(item)}
+                    // className="btn btn-danger btn-sm mb-1"
+                  >
+                    <DeleteIcon
+                      fontSize="large"
+                      style={{ color: "red", fontSize: 40 }}
+                    />
+                  </button>
+                )
+              )}
+            </div>
+
+            <div className="add_btn">
+              <button
+                onClick={() => increase(item)}
+                // className="btn btn-primary btn-sm mr-2 mb-1"
+              >
+                <AddCircleIcon
+                  fontSize="large"
+                  style={{ color: "green", fontSize: 40 }}
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
