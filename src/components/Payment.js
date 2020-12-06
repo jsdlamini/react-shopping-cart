@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./Payment.css";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import formartCurrency from "../util";
@@ -6,14 +6,13 @@ import Fade from "react-reveal/Fade";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import axios from "../axios";
 import db from "../Firebase";
+import { CartContext } from "../contexts/CartContext";
 
 function Payment({
   name,
   address,
   email,
-  removeFromCart,
-  setcartItems,
-  cartItems,
+
   order,
 }) {
   const location = useLocation();
@@ -31,20 +30,20 @@ function Payment({
   const [disabled, setDisabled] = useState(true);
   const [clientSecret, setClientSecret] = useState(true);
 
+  const { cartItems, total } = useContext(CartContext);
+
   useEffect(() => {
     //generate the special stripe secrete which allows us to charge a customer.
     const getClientSecret = async () => {
       const response = await axios({
         method: "post",
         //Stripe expects the total in a currencies subunites, hence multiply by 100 to get cents for amount in $(USD)
-        url: `/payments/create?total=${
-          location.cartItems.reduce((a, c) => a + c.price * c.count, 0) * 100
-        }`,
+        url: `/payments/create?total=${total * 100}`,
       });
       setClientSecret(response.data.clientSecret);
     };
     getClientSecret();
-  }, [location.cartItems]);
+  }, [cartItems]);
 
   console.log("The secrete is >>>>", clientSecret);
 
@@ -83,7 +82,7 @@ function Payment({
           .collection("orders")
           .doc(paymentIntent.id)
           .set({
-            cartItems: location.cartItems,
+            cartItems: cartItems,
             amount: paymentIntent.amount,
             created: paymentIntent.created,
             // email: location.email,
@@ -118,7 +117,7 @@ function Payment({
     <div className="payment">
       <div className="payment__container">
         <h1>
-          Checkout ( <Link to="#"> {location.cartItems.length} items </Link>) .
+          Checkout ( <Link to="#"> {cartItems.length} items </Link>) .
         </h1>
         {/* Payment section  - delivery adddress */}
         <div className="payment__section">
@@ -140,7 +139,7 @@ function Payment({
             {/* <div className="cart"> */}
             <Fade left cascade>
               <ul className="cart-items">
-                {location.cartItems.map((item) => (
+                {cartItems.map((item) => (
                   <li key={item._id}>
                     <div>
                       <img src={item.image} alt={item.title} />
@@ -148,14 +147,14 @@ function Payment({
                     <div>
                       {item.title}
                       <div className="right">
-                        {formartCurrency(item.price)} X {item.count}{" "}
-                        <button
+                        {formartCurrency(item.price)} X {item.quantity}{" "}
+                        {/* <button
                           className="button"
                           onClick={() => location.removeFromCart(item)}
                         >
                           {" "}
                           Remove
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                   </li>
@@ -192,16 +191,7 @@ function Payment({
               />
               <div className="payment__priceContainer">
                 <div>
-                  <strong>
-                    {" "}
-                    Order Total :{" "}
-                    {formartCurrency(
-                      location.cartItems.reduce(
-                        (a, c) => a + c.price * c.count,
-                        0
-                      )
-                    )}{" "}
-                  </strong>
+                  <strong> Order Total : {formartCurrency(total)} </strong>
                 </div>
                 <button disabled={processing || disabled || succeeded}>
                   <span>{processing ? <p> Processing</p> : "Buy Now"}</span>

@@ -1,3 +1,3 @@
 export default function formartCurrency(num) {
-  return "$" + Number(num.toFixed(1)).toLocaleString() + " ";
+  return "$" + Number(parseFloat(num).toFixed(1)).toLocaleString() + " ";
 }
