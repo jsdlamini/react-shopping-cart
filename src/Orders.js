@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./Orders.css";
 import db from "./Firebase";
 import { useLocation } from "react-router";
 import Order from "./Order";
+import { CartContext } from "./contexts/CartContext";
 
 function Orders({ email }) {
+  const { clearCart } = useContext(CartContext);
   const location = useLocation();
   const [orders, setOrders] = useState([]);
 
@@ -29,12 +31,24 @@ function Orders({ email }) {
 
   return (
     <div className="orders">
-      <h1> Your orders </h1>
+      <div className="deliver__message">
+        <h3>
+          Your order has been successfully processed... <br /> Expect your items
+          to be delivered within 10 days for delivery.
+          <br />
+          For more shopping,{" "}
+          <a href="/">
+            <strong onClick={() => clearCart()}>Click HERE. </strong>
+          </a>{" "}
+        </h3>
+      </div>
+
       <div className="orders__order">
-       
+        <h1> Your orders </h1>
+
         {orders?.map((order) => (
           <Order order={order} />
-        ))} 
+        ))}
       </div>
     </div>
   );

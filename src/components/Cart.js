@@ -43,20 +43,6 @@ function Cart() {
     // console.log(e.target.value);
   };
 
-  // const removeFromCart = (product) => {
-  //   dispatch({
-  //     type: "REMOVE_FROM_CART",
-  //     item: {
-  //       _id: product._id,
-  //       image: product.image,
-  //       title: product.title,
-  //       price: product.price,
-  //       description: product.description,
-  //       availableSizes: product.availableSizes,
-  //     },
-  //   });
-  // };
-
   const updateName = (e) => {
     // this.setState({ [e.target.name]: e.target.value });
     e.preventDefault();
@@ -107,7 +93,7 @@ function Cart() {
             <br />
             <button
               //className="button primary"
-              className="button_proceed "
+              className="button primary "
               onClick={() => {
                 setShowCheckout(true);
               }}
@@ -165,7 +151,7 @@ function Cart() {
                                 })
                               }
                             >
-                              Proceed to Checkout
+                              Proceed to Pay
                             </button>
                           </li>
                         </ul>
