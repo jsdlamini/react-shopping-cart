@@ -8,6 +8,8 @@ import axios from "../axios";
 import db from "../Firebase";
 import { CartContext } from "../contexts/CartContext";
 
+import Product from "./Product";
+
 function Payment({
   name,
   address,
@@ -30,7 +32,7 @@ function Payment({
   const [disabled, setDisabled] = useState(true);
   const [clientSecret, setClientSecret] = useState(true);
 
-  const { cartItems, total } = useContext(CartContext);
+  const { cartItems, total, clearCart } = useContext(CartContext);
 
   useEffect(() => {
     //generate the special stripe secrete which allows us to charge a customer.
@@ -131,39 +133,15 @@ function Payment({
           </div>
         </div>
         {/* Payment section  -  review items */}
-        <div className="payment__section">
-          <div className="payment__title">
-            <h3> Review and delivery</h3>
-          </div>
-          <div className="payment__items">
-            {/* <div className="cart"> */}
-            <Fade left cascade>
-              <ul className="cart-items">
-                {cartItems.map((item) => (
-                  <li key={item._id}>
-                    <div>
-                      <img src={item.image} alt={item.title} />
-                    </div>
-                    <div>
-                      {item.title}
-                      <div className="right">
-                        {formartCurrency(item.price)} X {item.quantity}{" "}
-                        {/* <button
-                          className="button"
-                          onClick={() => location.removeFromCart(item)}
-                        >
-                          {" "}
-                          Remove
-                        </button> */}
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </Fade>
-            {/* </div> */}
-          </div>
-        </div>
+
+        <Fade bottom cascade={true}>
+          <ul className="products">
+            {cartItems.map((product) => (
+              <Product product={product} />
+            ))}
+          </ul>
+        </Fade>
+
         {/* Payment section  -  payment method*/}
         <div className="payment__section">
           <div className="payment__title">

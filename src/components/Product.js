@@ -5,28 +5,24 @@ import { CartContext } from "../contexts/CartContext";
 //_id, image, title, price, description, availableSizes
 function Product({ product }) {
   const { addProduct, cartItems, increase } = useContext(CartContext);
-  
+
   const isInCart = (product) => {
     return !!cartItems.find((item) => item._id === product._id);
   };
 
   return (
- 
-      <li key={product._id}>
-        <div className="product">
-          <a href={"#" + product.title}>
-            <img src={product.image} alt={product.title} />
-            <p>{product.title}</p>
-          </a>
-          <div className="product-price">
-            <div>{formartCurrency(product.price)} </div>
-            {/* <button
-              onClick={() => addProduct(product)}
-              className="button primary"
-            >
-              Add To Cart
-            </button> */}
+    <li key={product._id}>
+      <div className="product">
+        <a href={"#" + product.title}>
+          <img src={product.image} alt={product.title} />
+          <p className='wrap'>{product.title}</p>
+        </a>
 
+        <div className="product__price__and__buttons">
+          <div className="product_price">
+            <span> {formartCurrency(product.price)}</span>
+          </div>
+          <div className="addMore_or_addToCart">
             {isInCart(product) && (
               <button
                 onClick={() => increase(product)}
@@ -46,8 +42,8 @@ function Product({ product }) {
             )}
           </div>
         </div>
-      </li>
- 
+      </div>
+    </li>
   );
 }
 

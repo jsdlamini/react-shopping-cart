@@ -18,27 +18,18 @@ function Order({ order }) {
           {order.data.cartItems.map((item) => (
             <li key={item._id}>
               <div>
-                <img src={item.image} alt={item.title} />
-              </div>
-              <div>
-                {item.title}
-                <div className="right">
-                  {formartCurrency(item.price)} X {item.count}{" "}
-                  <button
-                    className="button"
-                    //   onClick={() => removeFromCart(item)}
-                  >
-                    {" "}
-                    Remove
-                  </button>
-                </div>
+                {/* <img src={item.image} alt={item.title} /> */}
+                <h4>
+                  {item.title} ( {formartCurrency(item.price)} x {item.quantity}{" "}
+                  ) : {formartCurrency(item.price * item.quantity)}{" "}
+                </h4>
               </div>
             </li>
           ))}
         </ul>
       </Fade>
       <h3 className="order__total">
-       <strong> Order Total: {formartCurrency(order.data.amount)}{" "}</strong>
+        <strong> Order Total: {formartCurrency(order.data.amount)} </strong>
       </h3>
       {/* <p className="order__id">
         <small>{order.data.amount}</small>
@@ -48,4 +39,3 @@ function Order({ order }) {
 }
 
 export default Order;
-//

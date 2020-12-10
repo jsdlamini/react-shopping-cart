@@ -89,7 +89,7 @@ function Home() {
       <main>
         <div className="content">
           <div className="main">
-            {/* <input type = 'text'  onChange={this.typedTextProducts}  ></input> */}
+          
             <Filter
               count={products.length}
               size={size}
@@ -97,18 +97,20 @@ function Home() {
               filterProducts={filterProducts}
               sortProducts={sortProducts}
             ></Filter>
-            {/* {console.log("products, ", products)} */}
+     
           </div>
           <div className="products__and__cart">
             <div className="products__display">
               <Products products={products} />
             </div>
 
-{ cartItems.length !== 0 ? ( <div className="cart_sidebar">
-              <Cart />
-            </div>): ''
-           
-             }
+            {cartItems.length !== 0 ? (
+              <div className="cart_sidebar">
+                <Cart />
+              </div>
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </main>
